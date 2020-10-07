@@ -5,11 +5,12 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 fileData = 'BigData.csv'
-testData = 'Test.csv'
+testData = 'NewData.csv'
 data = pd.read_csv(fileData)
 data2 = pd.read_csv(testData)
 
 data['Sex'] = data.Sex.replace(['F', 'M'], [2, 1])
+data2['Sex'] = data2.Sex.replace(['F', 'M'], [2, 1])
 print(data.head(10))
 
 X = data[['Age', 'Sex', 'Weight', 'Height']]
@@ -23,7 +24,7 @@ KNNmodel = KNeighborsClassifier(n_neighbors=3)
 KNNmodel = KNNmodel.fit(train_X, train_Y)
 
 KNNscore = KNNmodel.score(test_X, test_Y)
-print(KNNscore)
+print("ความแม่นยำ " + str(round(KNNscore, 2)*100) + "%")
 
 df = pd.DataFrame(data2)
 print(df)
@@ -55,5 +56,5 @@ else:
     exp = (0, 0, 0)
 plt.pie(y, explode=exp, labels=x, autopct='%1.1f%%',
         shadow=True, startangle=90)
-plt.title("Body Mass Index : BMI")
+plt.title("BMI")
 plt.show()
