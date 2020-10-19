@@ -1,4 +1,4 @@
-# from sklearn import tree
+from sklearn import tree
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 import pandas as pd
@@ -16,16 +16,20 @@ print(data.head(10))
 X = data[['Age', 'Sex', 'Weight', 'Height']]
 Y = data['Group']
 
-train_X, test_X, train_Y, test_Y = train_test_split(X, Y, train_size=0.7, random_state=5)
+train_X, test_X, train_Y, test_Y = train_test_split(X, Y, train_size=0.7)
 print(train_X.count())
 
-KNNmodel = KNeighborsClassifier(n_neighbors=3)
+Treemodel = tree.DecisionTreeClassifier()
+KNNmodel = KNeighborsClassifier(n_neighbors=9)
 
+#ให้มันเรียนรู้
+Treemodel = Treemodel.fit(train_X, train_Y)
 KNNmodel = KNNmodel.fit(train_X, train_Y)
 
-KNNscore = KNNmodel.score(test_X, test_Y)
-print("ความแม่นยำ " + str(round(KNNscore, 2)*100) + "%")
-
+TreeScore = Treemodel.score(test_X, test_Y)
+KnnScore = KNNmodel.score(test_X, test_Y)
+print("ความแม่นยำ " + str(round(TreeScore, 2)*100) + "%")
+print("ความแม่นยำ " + str(round(KnnScore, 2)*100) + "%")
 df = pd.DataFrame(data2)
 print(df)
 print(df.to_numpy())

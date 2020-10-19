@@ -5,29 +5,22 @@ import matplotlib.pyplot as plt
 
 Restart = 1
 Loop = []
-numThin = 0
-numSlim = 0
-numFat = 0
-Stop = 1
-NumHuman = 1
-Processing = 0
-Human_list = []
-List_Name = []
-List_Age = []
-List_Sex = []
-List_Weight = []
-List_Height = []
 
 while Restart == 1:
     Loop = input("File or Input: ").strip().lower()
+
     if Loop == 'file':
+        numThin = 0
+        numSlim = 0
+        numFat = 0
+
         fileData = 'BigData.csv'
-        testData = 'NewData.csv'
+        inputData = 'NewData.csv'
         data = pd.read_csv(fileData)
-        data2 = pd.read_csv(testData)
+        data2 = pd.read_csv(inputData)
 
         data['Sex'] = data.Sex.replace(['F', 'M'], [2, 1])
-        data2['Sex'] = data2.Sex.replace(['F', 'M'], [2, 1])
+        # data2['Sex'] = data2.Sex.replace(['F', 'M'], [2, 1])
 
         X = data[['Age', 'Sex', 'Weight', 'Height']]
         Y = data['Group']
@@ -35,21 +28,21 @@ while Restart == 1:
         train_X, test_X, train_Y, test_Y = train_test_split(X, Y, train_size=0.7, random_state=5)
         print(train_X.count())
 
-        KNNmodel = KNeighborsClassifier(n_neighbors=3)
+        KnnModel = KNeighborsClassifier(n_neighbors=3)
 
-        KNNmodel = KNNmodel.fit(train_X, train_Y)
+        KnnModel = KnnModel.fit(train_X, train_Y)
 
-        KNNscore = KNNmodel.score(test_X, test_Y)
-        print("ความแม่นยำ " + str(round(KNNscore, 2) * 100) + "%")
+        KnnScore = KnnModel.score(test_X, test_Y)
+        print("ความแม่นยำ " + str(round(KnnScore, 2) * 100) + "%")
 
         df = pd.DataFrame(data2)
         print(df)
         print(df.to_numpy())
 
         newHuman = df.to_numpy()
-        print(KNNmodel.predict(newHuman))
+        print(KnnModel.predict(newHuman))
 
-        for i in KNNmodel.predict(newHuman):
+        for i in KnnModel.predict(newHuman):
             print(i)
             if i == "FAT":
                 numFat += 1
@@ -72,6 +65,16 @@ while Restart == 1:
         plt.title("BMI")
         plt.show()
     elif Loop == 'input':
+        Stop = 1
+        NumHuman = 1
+        Processing = 0
+        Human_list = []
+        List_Name = []
+        List_Age = []
+        List_Sex = []
+        List_Weight = []
+        List_Height = []
+
         while Stop == 1:
             Name = input("\nInput Your Name (input 0 to stop) : ")
 
@@ -85,7 +88,7 @@ while Restart == 1:
                 Stop = 1
                 print("Hello " + str(Name))
                 I_Age = input("Input Your Age : ")
-                while I_Age.isnumeric() != True:
+                while I_Age.isnumeric() != 1:
                     I_Age = input("Input Your Age : ")
 
                 I_Sex = str(input("Input Your Sex : ")).strip().lower()
@@ -98,14 +101,15 @@ while Restart == 1:
                         I_Sex = str(input("Input Your Sex : ")).strip().lower()
 
                 I_Weight = input("Input Your Weight : ")
-                while I_Weight.isnumeric() != True:
+                while I_Weight.isnumeric() != 1:
                     I_Weight = input("Input Your Weight : ")
 
                 I_Height = input("Input Your Height : ")
-                while I_Height.isnumeric() != True:
+                while I_Height.isnumeric() != 1:
                     I_Height = input("Input Your Height : ")
 
                 Human_list.append([int(I_Age), int(I_Sex), int(I_Weight), int(I_Height)])
+                print(Human_list)
                 List_Name.append(Name)
                 List_Age.append(I_Age)
                 List_Sex.append(I_Sex)
@@ -114,7 +118,7 @@ while Restart == 1:
                 NumHuman += 1
 
         df_csv = pd.DataFrame(data={"Age": List_Age, "Sex": List_Sex, "Weight": List_Weight, "Height": List_Height})
-        df_csv.to_csv("data.csv", sep=',', index=False)
+        df_csv.to_csv("NewData.csv", mode='a', header=False, sep=',', index=False)
 
         if Processing == 1:
             fileData = 'BigData.csv'
@@ -127,30 +131,14 @@ while Restart == 1:
 
             train_X, test_X, train_Y, test_Y = train_test_split(X, Y, train_size=0.7, random_state=5)
 
-            KNNmodel = KNeighborsClassifier(n_neighbors=3)
-            KNNmodel = KNNmodel.fit(train_X, train_Y)
-            KNNscore = KNNmodel.score(test_X, test_Y)
-            result_predict = KNNmodel.predict(Human_list)
+            KnnModel = KNeighborsClassifier(n_neighbors=3)
+            KnnModel = KnnModel.fit(train_X, train_Y)
+            KnnScore = KnnModel.score(test_X, test_Y)
+            result_predict = KnnModel.predict(Human_list)
 
-            print("ความแม่นยำ " + str(round(KNNscore, 2) * 100) + "%")
+            print("ความแม่นยำ " + str(round(KnnScore, 2) * 100) + "%")
             for i in range(len(result_predict)):
                 print(List_Name[i] + " : " + result_predict[i])
-
-            numThin = 0
-            numSlim = 0
-            numFat = 0
-            for i in result_predict:
-                if i == "FAT":
-                    numFat += 1
-                elif i == "THIN":
-                    numThin += 1
-                elif i == "SLIM":
-                    numSlim += 1
-            y = [numFat, numThin, numSlim]
-            x = ["FAT", "THIN", "SLIM"]
-            plt.bar(x, y)
-            plt.title("Body Mass Index : BMI")
-            plt.show()
 
         else:
             print("\n***** No People To Process *****")
